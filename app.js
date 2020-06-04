@@ -114,12 +114,21 @@ app.get("/settings", (req, res) => {
 })
 
 app.get("/signup", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user,
-        title: "signup"
-    }
-    return res.render('signup/signup', values);
+    if (!req.session.isLoggedIn) {
+        const values = {
+            isLoggedIn: req.session.isLoggedIn,
+            user: req.session.user,
+            title: "signup"
+        }
+        return res.render('signup/signup', values);
+      } else {
+        req.session.flash = {
+            type: 'info',
+            message: 'You are already signed in. Log out to create a new user!'
+        }
+        res.redirect("/");
+      }
+    
 });
 
 app.get("/users", (req, res) => {

@@ -109,9 +109,13 @@ router.post("/signup", async (req, res) => {
         email,
         passwordRepeat
     } = req.body;
-
+    console.log(username);
+    console.log(password);
+    console.log(email);
+    console.log(passwordRepeat);
+    
     const isPasswordTheSame = password === passwordRepeat;
-
+    console.log(isPasswordTheSame);
     if (username && password && isPasswordTheSame && email) {
 
         if (password.length < 8) {
@@ -140,14 +144,16 @@ router.post("/signup", async (req, res) => {
                     // Hash password
                     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-                    await User.query().insert({
+                    const user = await User.query().insert({
                         username: username,
                         password: hashedPassword,
                         email: email,
                         role_id: defaultRoles[0].id
                     })
-
+                    
                     sendMail(email, username, email, password)
+                    req.session.isLoggedIn = true;
+                    req.session.user = user;
                     req.session.flash = {
                         type: 'success',
                         message: `User created successfully. Welcome to SocialNode, ${username}.`

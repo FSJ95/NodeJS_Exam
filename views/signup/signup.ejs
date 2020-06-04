@@ -2,27 +2,41 @@
 
 <%- include('../navbar/navbar') %>
 
-<div class="text-center" id="content">
-    <form class="form-signin" method="POST" action="/signup">
-        <h1>KeaUsers</h1>
-        <h5>Sign up</h5>    
-        <div class="form-group">
-            <input type="text" id="username" class="form-control" name="username" placeholder="Username" required="">
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;"><div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+  <%- include('../flash/flash') %>  
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <h1 class="h2">Sign up for an account </h1>
+    </div>
+
+    <form method="POST" action="/signup" id="signup-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="username" class="form-control" id="username" name="username" aria-describedby="usernameHelp" placeholder="Username" required="">
+        <small id="usernameHelp" class="form-text text-muted">The username is how other people will see you.</small>
+      </div>
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Email" required="">
+        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="row">
+          <div class="col">
+              <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
           </div>
-          <div class="form-group">
-            <input type="email" id="email" class="form-control" name="email" placeholder="Email" required="">
+          <div class="col">
+              <input type="password" id="passwordRepeat" name="passwordRepeat" class="form-control" placeholder="Repeat Password" required="">
           </div>
-          <div class="row">
-            <div class="col">
-                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
-            </div>
-            <div class="col">
-                <input type="password" id="passwordRepeat" name="passwordRepeat" class="form-control" placeholder="Repeat Password" required="">
-            </div>
-          </div>
-        
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-      </form>
+        </div>
+        <small id="passwordHelp" class="form-text text-muted">Your password must match and be more than 8 characters long.</small>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  
+  </main>
 </div>
+</div>
+
 
 <%- include('../footer/footer') %>

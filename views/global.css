@@ -143,3 +143,7 @@ input[type=text], input[type=password]  {
   margin-top: 15px;
   margin-bottom: 0px;
 }
+
+#signup-form {
+  width: 50vh;
+}
