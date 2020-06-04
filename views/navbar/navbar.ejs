@@ -1,0 +1,119 @@
+<!-- views/navbar/navbar.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>SocialNode</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link href="/global.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" integrity="sha256-KzZiKy0DWYsnwMF+X1DvQngQ2/FxF7MF3Ff72XcpuPs=" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+  <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">SocialNode</a>
+  <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <% if (isLoggedIn == false) { %>
+  <div class="dropdown dropleft nav-button">
+    <button type="button" class="btn btn-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Sign in
+    </button>
+    <!-- Login dropdown -->
+    <div class="dropdown-menu">
+        <form class="px-4 py-3" method="POST" action="/signin">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control bg-light" id="username" name="username" placeholder="Username" required="">
+          </div>
+          <div class="form-group">
+            <label for="email">Password</label>
+            <input type="password" class="form-control bg-light" id="password" name="password" placeholder="Password" required="">
+          </div>
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </form>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">First time here? Sign up</a>
+        <a class="dropdown-item" href="#">Forgot your password?</a>
+      </div>
+  </div>
+<% } else { %> 
+    <div class="dropdown nav-button">
+          
+        <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div>
+                <span class="username"><%= user.username  %> </span>  
+                <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" alt="avatar" class="avatar border border-white">
+             
+            </div>
+            
+        </a>
+   
+        <div class="dropdown-menu dropdown-menu-right">
+            <a href="/profile" class="dropdown-item" >Profile</a>
+            <a href="/settings" class="dropdown-item" >Settings</a>
+    
+          <div class="dropdown-divider"></div>
+          <a href="/logout" class="dropdown-item text-danger" >Log out</a>
+        </div>
+      </div>
+<% } %> 
+  
+  
+    </nav>
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <div class="sidebar-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link <%= title == 'home' ? 'active' : '' %>" href="/">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <%= title == 'popular' ? 'active' : '' %>" href="/popular">
+                <i class="fas fa-bolt"></i>
+                Most popular
+            </a>
+          </li>
+        </ul>
+        <% if (isLoggedIn == true) { %>
+        <ul class="nav flex-column account-list">
+            <li class="nav-item">
+                <a class="nav-link <%= title == 'favorites' ? 'active' : '' %>" href="/favorites">
+                    <i class="fas fa-star"></i>Favorites
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%= title == 'profile' ? 'active' : '' %>" href="/profile">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <%= title == 'settings' ? 'active' : '' %>" href="/settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+              </li>
+        </ul>
+    <% } %> 
+
+      </div>
+    </nav>
+    <% if ( expressFlash.length > 0 ) { %>
+      <div class="alert alert-success" role="alert">
+        <%= expressFlash %>
+      </div>
+    <% } %>

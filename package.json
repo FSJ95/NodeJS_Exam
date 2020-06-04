@@ -1,0 +1,36 @@
+{
+  "name": "nodejs_exam",
+  "version": "1.0.0",
+  "description": "My project for the NodeJS Exam",
+  "main": "app.js",
+  "scripts": {
+    "migrate:latest": "knex migrate:latest",
+    "migrate:make": "knex migrate:make",
+    "migrate:rollback": "knex migrate:rollback",
+    "seed:make": "knex seed:make",
+    "seed:run": "knex seed:run",
+    "clean": "knex migrate:rollback &&knex migrate:latest && knex seed:run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FSJ95/NodeJS_Exam.git"
+  },
+  "author": "Frederik Søndergaard Jensen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FSJ95/NodeJS_Exam/issues"
+  },
+  "homepage": "https://github.com/FSJ95/NodeJS_Exam#readme",
+  "dependencies": {
+    "bcrypt": "^4.0.1",
+    "ejs": "^3.1.3",
+    "express": "^4.17.1",
+    "express-flash": "0.0.2",
+    "express-rate-limit": "^5.1.3",
+    "express-session": "^1.17.1",
+    "knex": "^0.21.1",
+    "mysql": "^2.18.1",
+    "nodemailer": "^6.4.7",
+    "objection": "^2.1.5"
+  }
+}

@@ -1,0 +1,26 @@
+<!-- views/users/users.ejs -->
+
+<%- include('../navbar/navbar') %>
+
+<script src="/users/users.js"></script>
+<div id="content">
+<h1>Users</h1>
+
+<table class="table table-striped" id="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Username</th>
+        <th scope="col">Age</th>
+        <th scope="col">Email</th>
+        <th scope="col">Role</th>
+      </tr>
+    </thead>
+    <tbody id="table-content">
+      
+    </tbody>
+  </table>
+  <div id="wrapper"></div>
+</div>
+
+<%- include('../footer/footer') %>
