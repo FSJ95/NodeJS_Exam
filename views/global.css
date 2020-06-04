@@ -137,3 +137,9 @@ input[type=text], input[type=password]  {
   margin-left: 10px;
   margin-right: 10px;
 }
+
+/* ALERT/FLASH */
+.alert {
+  margin-top: 15px;
+  margin-bottom: 0px;
+}

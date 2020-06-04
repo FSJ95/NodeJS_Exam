@@ -1,5 +1,4 @@
 const express = require('express')
-const flash = require('express-flash')
 const app = express();
 
 app.use(express.json());
@@ -23,7 +22,8 @@ const session = require('express-session');
 app.use(session({
     secret: require('./config/mysqlCredentials.js').sessionSecret,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie: { maxAge: 60000 }
 }));
 
 // OBJECTION & KNEX
@@ -38,25 +38,25 @@ const knex = Knex(knexFile.development); // This is the connection
 Model.knex(knex);
 
 // ROUTES
-app.use(flash());
 const authRoute = require("./routes/auth.js");
 const usersRoute = require("./routes/users.js");
 app.use(authRoute);
 app.use(usersRoute);
 
-
-
-app.all('/test', (req, res) => {
-    req.flash('success', 'This is a flash message using the express-flash module.');
-    res.redirect(301, '/');
-})
+//FLASH MIDDLEWARE
+app.use(function(req, res, next){
+     // Makes the flash fromthe request available in the response
+    res.locals.flash = req.session.flash;
+    delete req.session.flash;
+    next();
+});
 
 app.get("/", (req, res) => {
     const values = {
         isLoggedIn: req.session.isLoggedIn ? true : false,
         user: req.session.user,
         title: "home",
-        expressFlash: req.flash('success')
+        flash: res.locals.flash
     }
 
     return res.render('index/index', values);
@@ -84,7 +84,7 @@ app.get("/favorites", (req, res) => {
 
 app.get("/profile", (req, res) => {
     const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
+        isLoggedIn: req.session.isLoggedIn,
         user: req.session.user,
         title: "profile"
     }
@@ -99,27 +99,23 @@ app.get("/profile", (req, res) => {
 
 app.get("/settings", (req, res) => {
     const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
+        isLoggedIn: req.session.isLoggedIn,
         user: req.session.user,
         title: "settings"
     }
-
-    return res.render('settings/settings', values);
+    if (req.session.isLoggedIn) {
+        return res.render('settings/settings', values);
+      } else {
+          // So login knows what page the users was trying to access (where to redirect afterwards);
+        req.session.loginReturnTo = req.originalUrl;
+        res.redirect("/");
+      }
+    
 })
-
-app.get("/login", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
-        user: req.session.user,
-        title: "login"
-    }
-
-    return res.render('login/login', values);
-});
 
 app.get("/signup", (req, res) => {
     const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
+        isLoggedIn: req.session.isLoggedIn,
         user: req.session.user,
         title: "signup"
     }
@@ -128,7 +124,7 @@ app.get("/signup", (req, res) => {
 
 app.get("/users", (req, res) => {
     const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
+        isLoggedIn: req.session.isLoggedIn,
         user: req.session.user,
         title: "users"
     }

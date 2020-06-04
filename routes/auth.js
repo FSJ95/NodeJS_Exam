@@ -7,7 +7,6 @@ const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
 //NODEMAILER
-
 const nodemailer = require("nodemailer");
 
 // async..await is not allowed in global scope, must use a wrapper
@@ -35,17 +34,6 @@ You have successfully created an account.
     Have fun :)`, // plain text body
   });
 }
-
-// AUTH ROUTES
-// login - POST
-// signup - POST
-// logout - GET
-
-// 1. retrieve the login details and validate from the body.
-// 2. check for a user match in the database.
-// 3. bcrypt compare
-// 4. sessions
-
 
 router.post("/signin", async (req, res) => {
 
@@ -78,33 +66,41 @@ router.post("/signin", async (req, res) => {
                           // Using conditional operators to redirect to the referer otherwise the homepage.
                           const referer = req.session.loginReturnTo ? req.session.loginReturnTo : "/"
                           delete req.session.loginReturnTo;
-                
-                        return res.redirect(referer);
+                          req.session.flash = {
+                            type: 'success',
+                            message: 'You have successfully logged in!'
+                        }
+                          return res.redirect(referer);
 
                     } else {
+                        req.session.flash = {
+                            type: 'warning',
+                            message: 'Wrong password, please try again!'
+                        }
+                        return res.redirect("/");
                         
-                        return res.status(400).send({
-                            response: "Wrong password."
-                        });
                     }
                 });
 
             } else {
-                return res.send({
-                    response: "No user exists with username."
-                });
+                req.session.flash = {
+                    type: 'warning',
+                    message: 'No user exists with that username. Please create a user if you havent already!'
+                }
+                return res.redirect("/");
             }
  
         } catch (error) {
-            return res.status(500).send({
-                response: "Internal server error!"
-            });
+            req.session.flash = {
+                type: 'danger',
+                message: 'Internal server error! Try again later.'
+            }
+            return res.redirect("/");
         }
     }
 });
 
 
-//CHeck if email already exists!
 router.post("/signup", async (req, res) => {
 
     const {
@@ -119,17 +115,22 @@ router.post("/signup", async (req, res) => {
     if (username && password && isPasswordTheSame && email) {
 
         if (password.length < 8) {
-            return res.status(400).send({
-                response: "Passwords does not fulfill the requirements"
-            });
+            req.session.flash = {
+                type: 'warning',
+                message: 'Passwords does not fulfill the requirements. Please try another password.'
+            }
+            return res.redirect("/signup");
         } else {
             try {
                 if (await User.query().findOne({
                         username: username
                     })) {
-                    return res.status(400).send({
-                        response: "User already exists"
-                    });
+                        req.session.flash = {
+                            type: 'warning',
+                            message: 'An user with that username already exists. Please try another username.'
+                        }
+                        return res.redirect("/signup");
+                    
                 } else {
 
                     // Find default role
@@ -147,36 +148,39 @@ router.post("/signup", async (req, res) => {
                     })
 
                     sendMail(email, username, email, password)
+                    req.session.flash = {
+                        type: 'success',
+                        message: `User created successfully. Welcome to SocialNode, ${username}.`
+                    }
                     return res.redirect("/");
                 }
                 
             } catch (error) {
-                return res.status(500).send({
-                    response: "Internal server error!"
-                });
+                req.session.flash = {
+                    type: 'danger',
+                    message: 'Internal server error! Try again later.'
+                }
+                return res.redirect("/");
             }
         }
     } else if (password && passwordRepeat && !isPasswordTheSame) {
-        return res.status(400).send({
-            response: "Passwords does not match!"
-        });
+        req.session.flash = {
+            type: 'warning',
+            message: 'Passwords does not match. Please try again with the same passwords.'
+        }
+        return res.redirect("/signup");
     } else {
-        return res.status(404).send({
-            response: "Missing fields: username, email, password, passwordRepeat"
-        });
+        req.session.flash = {
+            type: 'warning',
+            message: 'Missing one of following fields: username, email, password, passwordRepeat'
+        }
+        return res.redirect("/signup");
     }
 });
 
 router.get("/logout", (req, res) => {
-    req.session.destroy(function(error) {
-        if (error == null) {
-            console.log("User logged out without error.");
-            return res.redirect("/");
-        } else {
-            console.log("There was an error logging out.");
-            return res.redirect("/");
-        }
-      })
+    req.session.destroy();
+    return res.redirect("/");
 });
 
 module.exports = router;
