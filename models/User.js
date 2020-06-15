@@ -12,7 +12,8 @@ class User extends Model {
         const Role = require('./Role.js');
         const Post = require('./Post.js');
         const Category = require('./Category.js');
-    
+        const Point = require('./Point.js');
+
         return {
             role: {
                 relation: Model.BelongsToOneRelation,
@@ -28,6 +29,14 @@ class User extends Model {
                 join: {
                     from: 'users.id',
                     to: 'posts.userId'
+                }
+            },
+            point: {
+                relation: Model.HasManyRelation,
+                modelClass: Point,
+                join: {
+                    from: 'users.id',
+                    to: 'points.userId'
                 }
             },
             category: {

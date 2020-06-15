@@ -1,42 +1,115 @@
-$(document).ready(function () {
+var loggedIn = false;
+var user;
+$.get('/status', function (data) {
+    user = data.user;
+    loggedIn = data.isLoggedIn;
 
-    // Fetching session status
-    fetch('/status').then(function (response) {
-        if (response.status !== 200) {
-            console.log('There was a problem: ' + response.status);
-            return;
-        } else {
-            response.json().then(function (data) {
+    if (data.isLoggedIn) {
+        $('.isLoggedIn').show();
 
-                // Showing/Hiding elements based on if the user is logged in.
-                if (data.isLoggedIn) {
-                    $('.isLoggedIn').show();
+    } else {
+        $('.isNotLoggedIn').show();
+    }
 
-                } else {
-                    $('.isNotLoggedIn').show();
-                }
+    // Showing flash messages is any is included in the session status.
+    if (data.flashMessage) {
+        $('.flashMessage').addClass('alert-' + data.flashMessage.type);
+        $('#flashMessageType').text(data.flashMessage.type + '!');
+        $('#flashMessageMessage').text(data.flashMessage.message);
+        $('.flashMessage').show();
+    }
 
-                // Showing flash messages is any is included in the session status.
-                if (data.flashMessage) {
-                    $('.flashMessage').addClass('alert-' + data.flashMessage.type);
-                    $('#flashMessageType').text(data.flashMessage.type + '!');
-                    $('#flashMessageMessage').text(data.flashMessage.message);
-                    $('.flashMessage').show();
-                }
-
-                // Showing the logged in users info relevant places (Top right corner etc.).
-                if (data.user) {
-                    $('.currentUsername').text(data.user.username);
-                }
-            });
-        }
-    });
-
+    if (data.user) {
+        user = data.user;
+        $('.currentUsername').text(data.user.username);
+    }
 });
 
+// GIVE OR TAKE POST POINTS
+// Think about cleaning up this shitshow xD
+function likePost(elem, postID) {
+    // SET TO loggedIn
+    if (loggedIn) {
+        if ($(elem).css("color") === "rgb(0, 128, 0)") {
+            $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) - 1));
+            $(elem).css({
+                "color": "black",
+            });
+            $(elem).find('svg').remove();
+            $(elem).append('<i class="fas fa-chevron-up like' + postID + '"></i>');
+        } else {
+            $.post('/api/posts/like/' + postID);
+            $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) + 1));
+
+            // Change green
+            $(elem).css({
+                "color": "green",
+            });
+            $(elem).find('svg').remove();
+            $(elem).append('<i class="fas fa-chevron-circle-up like' + postID + '"></i>');
+
+            // Change red if clicked
+            if ($('.voting .dislike-button' + postID).css("color") === "rgb(255, 0, 0)") {
+                $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) + 1));
+                $('.voting .dislike-button' + postID).css({
+                    "color": "black",
+                });
+                $('.voting .dislike' + postID).remove();
+                $('.voting .dislike-button' + postID).append('<i class="fas fa-chevron-down dislike' + postID + '"></i>');
+            }
+        }
+    }
+}
+
+function dislikePost(elem, postID) {
+
+    // SET TO loggedIn
+    if (true) {
+        if ($(elem).css("color") === "rgb(255, 0, 0)") {
+            $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) + 1));
+            $(elem).css({
+                "color": "black",
+            });
+            $(elem).find('svg').remove();
+            $(elem).append('<i class="fas fa-chevron-down dislike"></i>');
+        } else {
+            $.post('/api/posts/dislike/' + postID);
+            $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) - 1));
+
+            // Change red
+            $(elem).css({
+                "color": "red",
+            });
+            $(elem).find('svg').remove();
+            $(elem).append('<i class="fas fa-chevron-circle-down dislike' + postID + '"></i>');
+
+            // Change green if clicked
+            if ($('.voting .like-button' + postID).css("color") === "rgb(0, 128, 0)") {
+                $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) - 1));
+                $('.voting .like-button' + postID).css({
+                    "color": "black",
+                });
+                $('.voting .like' + postID).remove();
+                $('.voting .like-button' + postID).append('<i class="fas fa-chevron-up like' + postID + '"></i>');
+
+            }
+        }
+    }
+}
+
+
+// POST GENERATION
 function generatePosts(list) {
 
     for (i = 0; i < postList.length; i++) {
+
+        var points = 0;
+
+        for (j = 0; j < postList[i].points.length; j++) {
+            points = points + postList[i].points[j].points;
+        }
+        console.log(points)
+
 
         $('#post-wrapper').append(`<div class="post">
           <div class="row justify-content-md-center">
@@ -44,9 +117,9 @@ function generatePosts(list) {
             <div class="col-md-auto post-points">
       
               <div class="voting">
-                <a><i class="fas fa-chevron-up"></i></a>
-                <span>${postList[i].points}</span>
-                <a><i class="fas fa-chevron-down"></i></a>
+                <a onclick="likePost(this, ${postList[i].id})" class="like-button${postList[i].id}"><i class="fas fa-chevron-up like${postList[i].id}"></i></a>
+                <span id="post-${postList[i].id}-points">${points}</span>
+                <a onclick="dislikePost(this, ${postList[i].id})" class="dislike-button${postList[i].id}"><i class="fas fa-chevron-down dislike${postList[i].id}"></i></a>
               </div>
       
             </div>
@@ -75,8 +148,31 @@ function generatePosts(list) {
             </div>
           </div>
         </div>`);
-    }
 
+        if (loggedIn) {
+            for (j = 0; j < postList[i].points.length; j++) {
+                var postID = postList[i].id
+
+                if (user.id === postList[i].points[j].userId) {
+                    if (postList[i].points[j].points === 1) {
+                        $('.voting .like-button' + postID).css({
+                            "color": "green",
+                        });
+                        $('.voting .like' + postID).remove();
+                        $('.voting .like-button' + postID).append('<i class="fas fa-chevron-circle-up like' + postID + '"></i>');
+
+                    } else if (postList[i].points[j].points === -1) {
+                        $('.voting .dislike-button' + postID).css({
+                            "color": "red",
+                        });
+                        $('.voting .dislike' + postID).remove();
+                        $('.voting .dislike-button' + postID).append('<i class="fas fa-chevron-circle-down dislike' + postID + '"></i>');
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 function sortListByPoints() {
@@ -86,7 +182,7 @@ function sortListByPoints() {
     $('.date-button').removeClass('btn-secondary');
     $('.date-button').addClass('btn-outline-secondary');
     generatePosts(postList.sort((a, b) => {
-        return b['points'] - a['points'];
+        return b['totalPoints'] - a['totalPoints'];
     }));
 }
 

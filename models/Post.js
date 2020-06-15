@@ -10,6 +10,7 @@ class Post extends Model {
         // Importing models here is a one way to avoid require loops.
         const User = require('./User.js');
         const Category = require('./Category.js');
+        const Point = require('./Point.js');
 
         return {
             user: {
@@ -26,6 +27,14 @@ class Post extends Model {
                 join: {
                     from: 'posts.categoryID',
                     to: 'categories.id'
+                }
+            },
+            point: {
+                relation: Model.HasManyRelation,
+                modelClass: Point,
+                join: {
+                    from: 'posts.id',
+                    to: 'points.postId'
                 }
             },
         };

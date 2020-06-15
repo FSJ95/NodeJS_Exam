@@ -13,10 +13,9 @@ exports.up = function (knex) {
             table.string('username').unique().notNullable();
             table.string('password').notNullable();
             table.string('email').notNullable();
-            table.integer('age');
 
             table.integer('role_id').notNullable().unsigned();
-            table.foreign('role_id').references('id').inTable('');
+            table.foreign('role_id').references('id').inTable('roles');
 
             table.dateTime('updated_at').defaultTo(knex.raw('NULL ON UPDATE CURRENT_TIMESTAMP'));
             table.dateTime('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'));
@@ -33,10 +32,18 @@ exports.up = function (knex) {
 
             table.string('title').notNullable();
             table.string('content').notNullable();
-            table.integer('points').notNullable().defaultTo(0);
 
             table.dateTime('updated_at').defaultTo(knex.raw('NULL ON UPDATE CURRENT_TIMESTAMP'));
             table.dateTime('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'));
+        })
+        .createTable('points', (table) => {
+            table.integer('points').notNullable();
+
+            table.integer('user_id').notNullable().unsigned();
+            table.foreign('user_id').references('id').inTable('users');
+
+            table.integer('post_id').notNullable().unsigned();
+            table.foreign('post_id').references('id').inTable('posts');
         });
 
 };
@@ -46,8 +53,9 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
     return knex.schema
-        .dropTableIfExists('roles')
+        .dropTableIfExists('points')
         .dropTableIfExists('posts')
-        .dropTableIfExists('categories')
-        .dropTableIfExists('users');
+        .dropTableIfExists('users')
+        .dropTableIfExists('roles')
+        .dropTableIfExists('categories');
 };
