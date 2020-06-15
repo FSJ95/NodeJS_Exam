@@ -8,6 +8,12 @@ body {
   vertical-align: text-bottom;
 }
 
+.isLoggedIn,
+.isNotLoggedIn,
+.flashMessage {
+  display: none;
+}
+
 /* Sidebar */
 
 .sidebar {
@@ -15,8 +21,10 @@ body {
   top: 0;
   bottom: 0;
   left: 0;
-  z-index: 100; /* Behind the navbar */
-  padding: 48px 0 0; /* Height of navbar */
+  z-index: 100;
+  /* Behind the navbar */
+  padding: 48px 0 0;
+  /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
 
@@ -26,25 +34,32 @@ body {
   height: calc(100vh - 48px);
   padding-top: .5rem;
   overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  overflow-y: auto;
 }
 
 svg {
   margin-right: 10px;
   margin-left: 5px;
-
 }
+
 .nav-item {
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 5px;
   padding-bottom: 5px;
 }
+
 .sidebar .nav-link {
   font-weight: 500;
   color: #333;
-  border-radius: 8px;
   line-height: 30px;
+}
+
+.sidebar .category-link {
+  line-height: 20px !important;
+  background-color: rgba(100, 102, 105, .05);
+  margin-top: 1px;
+
 }
 
 .sidebar .account-list {
@@ -58,14 +73,24 @@ svg {
   color: #999;
 }
 
-.sidebar .nav-link.active  {
+.sidebar .nav-link.active {
   color: white;
   background-color: #656769;
 }
 
-.sidebar .nav-link.active:hover  {
+.sidebar .nav-link.active:hover {
   color: white;
   background-color: #656769;
+}
+
+.sidebar .nav-link.open {
+  color: black;
+  background-color: #65676919;
+}
+
+.sidebar .nav-link.open:hover {
+  color: black;
+  background-color: #65676919;
 }
 
 
@@ -80,6 +105,11 @@ svg {
 }
 
 /* Navbar */
+
+.push-right {
+  float: right;
+  height: 30px;
+}
 
 .navbar-brand {
   padding-top: .75rem;
@@ -115,7 +145,8 @@ svg {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
 
-input[type=text], input[type=password]  {
+input[type=text],
+input[type=password] {
   border: 2px solid rgb(215, 215, 215) !important;
   border-radius: 4px !important;
 }
@@ -124,9 +155,9 @@ input[type=text], input[type=password]  {
   padding: 5px 10px;
 }
 
-.navbar .username {
+.navbar .currentUsername {
   font-size: 14px;
-  color:white;
+  color: white;
 }
 
 .navbar .avatar {
@@ -146,4 +177,60 @@ input[type=text], input[type=password]  {
 
 #signup-form {
   width: 50vh;
+}
+
+/* PROFILE */
+
+.profile-content {
+  padding-top: 20px;
+  background-color: #f8f9fa !important;
+  margin-top: 20px;
+}
+
+.profile-content .avatar {
+  height: 130px;
+  width: 130px;
+}
+
+#profile-buttons {
+  padding-bottom: 16px;
+}
+
+/* POSTS */
+.post {
+  margin-bottom: 20px;
+}
+
+.post .avatar {
+  height: 30px;
+  width: 30px;
+}
+
+.post .voting {
+  text-align: center;
+  width: 23px;
+  margin: 0 auto;
+}
+
+.post-footer {
+  height: 30px;
+}
+
+.post-footer-text {
+  line-height: 30px;
+}
+
+.post-content {
+  padding: 16px;
+  background-color: #f8f9fa !important;
+}
+
+.post-title,
+.post-text {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.post-category {
+  margin-left: 10px;
 }

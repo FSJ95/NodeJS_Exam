@@ -1,0 +1,33 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Sign up for an account </h1>
+</div>
+
+<form method="POST" action="/signup" id="signup-form">
+  <div class="form-group">
+    <label for="username">Username</label>
+    <input type="username" class="form-control" id="username" name="username" aria-describedby="usernameHelp"
+      placeholder="Username" required="">
+    <small id="usernameHelp" class="form-text text-muted">The username is how other people will see you.</small>
+  </div>
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Email"
+      required="">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <div class="row">
+      <div class="col">
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required="">
+      </div>
+      <div class="col">
+        <input type="password" id="passwordRepeat" name="passwordRepeat" class="form-control"
+          placeholder="Repeat Password" required="">
+      </div>
+    </div>
+    <small id="passwordHelp" class="form-text text-muted">Your password must match and be more than 8 characters
+      long.</small>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

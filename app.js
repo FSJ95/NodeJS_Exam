@@ -2,11 +2,10 @@ const express = require('express')
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static('views'));
-
-// set the view engine to ejs
-app.set('view engine', 'ejs');
+app.use(express.urlencoded({
+    extended: false
+}));
+app.use(express.static('public'));
 
 // RATE LIMIT
 const rateLimit = require("express-rate-limit");
@@ -23,7 +22,9 @@ app.use(session({
     secret: require('./config/mysqlCredentials.js').sessionSecret,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 60000 }
+    cookie: {
+        maxAge: 60000
+    }
 }));
 
 // OBJECTION & KNEX
@@ -39,111 +40,94 @@ Model.knex(knex);
 
 // ROUTES
 const authRoute = require("./routes/auth.js");
-const usersRoute = require("./routes/users.js");
+const userRoute = require("./routes/users.js");
+const postRoute = require("./routes/posts.js");
+const categoryRoute = require("./routes/categories.js");
 app.use(authRoute);
-app.use(usersRoute);
+app.use(userRoute);
+app.use(postRoute);
+app.use(categoryRoute);
 
-//FLASH MIDDLEWARE
-app.use(function(req, res, next){
-     // Makes the flash fromthe request available in the response
-    res.locals.flash = req.session.flash;
-    delete req.session.flash;
-    next();
-});
+// FILESYSTEM (Load files and combine them)
+const fs = require('fs');
+
+const navbarPage = fs.readFileSync("public/navbar/navbar.html", "utf8");
+const footerPage = fs.readFileSync("public/footer/footer.html", "utf8");
+const flashPage = fs.readFileSync("public/flash/flash.html", "utf8");
+const modalPage = fs.readFileSync("public/modal/modal.html", "utf8");
+
+const frontpagePage = fs.readFileSync("public/index/index.html", "utf8");
+const favoritesPage = fs.readFileSync("public/favorites/favorites.html", "utf8");
+const categoryPage = fs.readFileSync("public/category/category.html", "utf8");
+const profilePage = fs.readFileSync("public/profile/profile.html", "utf8");
+const settingsPage = fs.readFileSync("public/settings/settings.html", "utf8");
+const signupPage = fs.readFileSync("public/signup/signup.html", "utf8");
 
 app.get("/", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
-        user: req.session.user,
-        title: "home",
-        flash: res.locals.flash
-    }
 
-    return res.render('index/index', values);
-})
+    return res.send(navbarPage + flashPage + modalPage + frontpagePage + footerPage);
+});
 
-app.get("/popular", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
-        user: req.session.user,
-        title: "popular"
-    }
+app.get("/category/:category", (req, res) => {
 
-    return res.render('popular/popular', values);
-})
+    return res.send(navbarPage + flashPage + modalPage + categoryPage + footerPage);
+});
 
 app.get("/favorites", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn ? true : false,
-        user: req.session.user,
-        title: "favorites"
-    }
+    if (req.session.isLoggedIn) {
 
-    return res.render('favorites/favorites', values);
-})
+        return res.send(navbarPage + flashPage + favoritesPage + footerPage);
+
+    } else {
+
+        res.redirect("/");
+
+    }
+});
 
 app.get("/profile", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user,
-        title: "profile"
-    }
     if (req.session.isLoggedIn) {
-        return res.render('profile/profile', values);
-      } else {
-          // So login knows what page the users was trying to access (where to redirect afterwards);
-        req.session.loginReturnTo = req.originalUrl;
+
+        res.redirect(`/profile/${req.session.user.username}`);
+
+    } else {
+
         res.redirect("/");
-      }
+    }
+});
+
+app.get("/profile/:username", (req, res) => {
+
+    return res.send(navbarPage + flashPage + profilePage + footerPage);
+
 });
 
 app.get("/settings", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user,
-        title: "settings"
-    }
+
     if (req.session.isLoggedIn) {
-        return res.render('settings/settings', values);
-      } else {
-          // So login knows what page the users was trying to access (where to redirect afterwards);
-        req.session.loginReturnTo = req.originalUrl;
+
+        return res.send(navbarPage + flashPage + settingsPage + footerPage);
+
+    } else {
+
+        // // So login knows what page the users was trying to access (where to redirect afterwards);
+        // req.session.loginReturnTo = req.originalUrl;
         res.redirect("/");
-      }
-    
-})
+    }
+
+});
 
 app.get("/signup", (req, res) => {
     if (!req.session.isLoggedIn) {
-        const values = {
-            isLoggedIn: req.session.isLoggedIn,
-            user: req.session.user,
-            title: "signup"
-        }
-        return res.render('signup/signup', values);
-      } else {
-        req.session.flash = {
-            type: 'info',
-            message: 'You are already signed in. Log out to create a new user!'
-        }
-        res.redirect("/");
-      }
-    
-});
 
-app.get("/users", (req, res) => {
-    const values = {
-        isLoggedIn: req.session.isLoggedIn,
-        user: req.session.user,
-        title: "users"
-    }
-    if (req.session.isLoggedIn) {
-        return res.render('users/users', values);
-      } else {
-          // So login knows what page the users was trying to access (where to redirect afterwards);
-        req.session.loginReturnTo = req.originalUrl;
+        return res.send(navbarPage + flashPage + signupPage + footerPage);
+
+    } else {
+
         res.redirect("/");
-      }
+
+    }
+
 });
 
 const PORT = 80;

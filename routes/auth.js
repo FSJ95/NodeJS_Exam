@@ -11,19 +11,19 @@ const nodemailer = require("nodemailer");
 
 // async..await is not allowed in global scope, must use a wrapper
 async function sendMail(email, username, email, password) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'nodeauthtester@gmail.com',
-      pass: 'ikkemitnormalepassword'
-    }
-  });
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'nodeauthtester@gmail.com',
+            pass: 'ikkemitnormalepassword'
+        }
+    });
 
-  let info = await transporter.sendMail({
-    from: "NodeUsers", // sender address
-    to: email, // list of receivers
-    subject: "Welcome to NodeUsers", // Subject line
-    text: `Welcome to NodeUsers.
+    let info = await transporter.sendMail({
+        from: "NodeUsers", // sender address
+        to: email, // list of receivers
+        subject: "Welcome to NodeUsers", // Subject line
+        text: `Welcome to NodeUsers.
 
 You have successfully created an account.
     These are your credentials:
@@ -32,7 +32,7 @@ You have successfully created an account.
     Password: ${password}\n\n
     
     Have fun :)`, // plain text body
-  });
+    });
 }
 
 router.post("/signin", async (req, res) => {
@@ -47,9 +47,11 @@ router.post("/signin", async (req, res) => {
 
         try {
             // Check if the username exists in the database.
-            const userObject = await User.query().findOne({username: username}).withGraphFetched('role');
+            const userObject = await User.query().findOne({
+                username: username
+            }).withGraphFetched('role');
             if (userObject) {
-                
+
                 // Check if password matches hashedPassword from database.
                 const hashedPassword = userObject.password;
                 bcrypt.compare(password, hashedPassword).then((result) => {
@@ -59,18 +61,18 @@ router.post("/signin", async (req, res) => {
                             req.session.isLoggedIn = true;
                             req.session.user = user = userObject;
                             console.log("User is successfully logged in.");
-                          } else {
+                        } else {
                             console.log("User is already logged in.");
-                          }
-                        
-                          // Using conditional operators to redirect to the referer otherwise the homepage.
-                          const referer = req.session.loginReturnTo ? req.session.loginReturnTo : "/"
-                          delete req.session.loginReturnTo;
-                          req.session.flash = {
+                        }
+
+                        // Using conditional operators to redirect to the referer otherwise the homepage.
+                        const referer = req.session.loginReturnTo ? req.session.loginReturnTo : "/"
+                        delete req.session.loginReturnTo;
+                        req.session.flash = {
                             type: 'success',
                             message: 'You have successfully logged in!'
                         }
-                          return res.redirect(referer);
+                        return res.redirect(referer);
 
                     } else {
                         req.session.flash = {
@@ -78,7 +80,7 @@ router.post("/signin", async (req, res) => {
                             message: 'Wrong password, please try again!'
                         }
                         return res.redirect("/");
-                        
+
                     }
                 });
 
@@ -89,7 +91,7 @@ router.post("/signin", async (req, res) => {
                 }
                 return res.redirect("/");
             }
- 
+
         } catch (error) {
             req.session.flash = {
                 type: 'danger',
@@ -109,11 +111,7 @@ router.post("/signup", async (req, res) => {
         email,
         passwordRepeat
     } = req.body;
-    console.log(username);
-    console.log(password);
-    console.log(email);
-    console.log(passwordRepeat);
-    
+
     const isPasswordTheSame = password === passwordRepeat;
     console.log(isPasswordTheSame);
     if (username && password && isPasswordTheSame && email) {
@@ -129,12 +127,12 @@ router.post("/signup", async (req, res) => {
                 if (await User.query().findOne({
                         username: username
                     })) {
-                        req.session.flash = {
-                            type: 'warning',
-                            message: 'An user with that username already exists. Please try another username.'
-                        }
-                        return res.redirect("/signup");
-                    
+                    req.session.flash = {
+                        type: 'warning',
+                        message: 'An user with that username already exists. Please try another username.'
+                    }
+                    return res.redirect("/signup");
+
                 } else {
 
                     // Find default role
@@ -149,18 +147,18 @@ router.post("/signup", async (req, res) => {
                         password: hashedPassword,
                         email: email,
                         role_id: defaultRoles[0].id
-                    })
-                    
+                    });
+
                     sendMail(email, username, email, password)
                     req.session.isLoggedIn = true;
                     req.session.user = user;
                     req.session.flash = {
                         type: 'success',
                         message: `User created successfully. Welcome to SocialNode, ${username}.`
-                    }
+                    };
                     return res.redirect("/");
                 }
-                
+
             } catch (error) {
                 req.session.flash = {
                     type: 'danger',
@@ -182,6 +180,19 @@ router.post("/signup", async (req, res) => {
         }
         return res.redirect("/signup");
     }
+});
+
+router.get("/status", (req, res) => {
+    // Makes any flash available in the response, then deletes it.
+    res.locals.flash = req.session.flash;
+    delete req.session.flash;
+
+    var status = {
+        isLoggedIn: req.session.isLoggedIn ? true : false,
+        flashMessage: res.locals.flash,
+        user: req.session.user
+    };
+    return res.send(status);
 });
 
 router.get("/logout", (req, res) => {
