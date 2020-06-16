@@ -2,7 +2,7 @@ const router = require('express').Router();
 
 const User = require('../models/User.js');
 
-router.get('/fetchusers', async (req, res) => {
+router.get('/api/users', async (req, res) => {
     const users = await User.query().select().withGraphFetched('role');
     if (req.session.isLoggedIn) {
         res.send(users);
@@ -11,7 +11,7 @@ router.get('/fetchusers', async (req, res) => {
     }
 });
 
-router.get('/fetchuser/:username', async (req, res) => {
+router.get('/api/users/:username', async (req, res) => {
     const username = req.params.username
     const user = await User.query().findOne({
         username: username

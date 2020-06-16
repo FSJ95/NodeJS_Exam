@@ -2,17 +2,16 @@
 <div class="profile-content border">
   <div class="row justify-content-md-center">
     <div class="col-md-auto">
-      <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg"
-        class="avatar border border-dark rounded-circle">
+      <img id="profileAvatar" src="/defaultprofilepicture.png" class="avatar border border-dark rounded-circle">
     </div>
     <div class="col-4">
       <h1 id="profileUsername"></h1>
       <div class="row">
         <div class="col">
-          <b>Posts: </b><span>1337</span>
+          <b>Posts: </b><span id="profilePosts">1337</span>
         </div>
         <div class="col">
-          <b>Points: </b><span>1337</span>
+          <b>Points: </b><span id="profilePoints">1337</span>
         </div>
       </div>
 
@@ -21,14 +20,15 @@
           <b>Followers: </b><span>1337</span>
         </div>
         <div class="col">
-          <b>Created: </b><span>29/09/1995</span>
+          <b>Created: </b><span id="profileCreated">29/09/1995</span>
         </div>
       </div>
     </div>
 
   </div>
-  <hr>
-  <div class="row justify-content-md-center" id="profile-buttons">
+  <div style="height: 16px;" class="isNotLoggedIn"></div>
+  <hr class="isLoggedIn">
+  <div class="row justify-content-md-center isLoggedIn" id="profile-buttons">
     <div class="col-md-auto">
       <button type="button" class="btn btn-dark">
         <i class="fas fa-plus"></i>

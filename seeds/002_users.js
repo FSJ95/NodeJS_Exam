@@ -6,13 +6,15 @@ exports.seed = function (knex) {
         username: "Admin",
         password: '$2b$12$IDxNzdhYIlxm2aggkfVgf.cTlBTIzO/lw0sf0b8wQxAasr8PPW4VC', //password
         email: 'FSJ95@hotmail.dk',
-        role_id: roles.find(role => role.role === 'ADMIN').id
+        role_id: roles.find(role => role.role === 'ADMIN').id,
+        avatar: 'admin.jpg'
       },
       {
         username: "PeterParker",
         password: '$2b$12$IDxNzdhYIlxm2aggkfVgf.cTlBTIzO/lw0sf0b8wQxAasr8PPW4VC', //password
         email: 'notspiderman@avengers.com',
-        role_id: roles.find(role => role.role === 'USER').id
+        role_id: roles.find(role => role.role === 'USER').id,
+        avatar: 'spiderman.jpg'
       },
     ]);
 

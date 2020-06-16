@@ -6,6 +6,28 @@ const Role = require('../models/Role.js');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
 
+//MULTER
+const crypto = require("crypto");
+const multer = require("multer");
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "pictures/");
+    },
+    filename: (req, file, cb) => {
+        const fileName = crypto.randomBytes(20).toString("hex");
+        const mimetypeArray = file.mimetype.split("/");
+        if (mimetypeArray[0] === "image") {
+            const extension = mimetypeArray[mimetypeArray.length - 1];
+            cb(null, fileName + "." + extension);
+        } else {
+            cb("Not a video error. Mimetype: " + file.mimetype);
+        }
+    }
+});
+const upload = multer({
+    storage: storage
+});
+
 //NODEMAILER
 const nodemailer = require("nodemailer");
 
@@ -20,16 +42,15 @@ async function sendMail(email, username, email, password) {
     });
 
     let info = await transporter.sendMail({
-        from: "NodeUsers", // sender address
+        from: "NodeSocial", // sender address
         to: email, // list of receivers
-        subject: "Welcome to NodeUsers", // Subject line
-        text: `Welcome to NodeUsers.
+        subject: "Welcome to NodeSocial", // Subject line
+        text: `Welcome to NodeSocial.
 
 You have successfully created an account.
     These are your credentials:
     Username: ${username}\n
     Email: ${email}\n
-    Password: ${password}\n\n
     
     Have fun :)`, // plain text body
     });
@@ -103,7 +124,7 @@ router.post("/signin", async (req, res) => {
 });
 
 
-router.post("/signup", async (req, res) => {
+router.post("/signup", upload.single('avatar'), async (req, res) => {
 
     const {
         username,
@@ -111,6 +132,8 @@ router.post("/signup", async (req, res) => {
         email,
         passwordRepeat
     } = req.body;
+
+    const avatarFileName = req.file.filename ? req.file.filename : 'defaultprofilepicture.png';
 
     const isPasswordTheSame = password === passwordRepeat;
     console.log(isPasswordTheSame);
@@ -146,7 +169,8 @@ router.post("/signup", async (req, res) => {
                         username: username,
                         password: hashedPassword,
                         email: email,
-                        role_id: defaultRoles[0].id
+                        role_id: defaultRoles[0].id,
+                        avatar: avatarFileName
                     });
 
                     sendMail(email, username, email, password)
@@ -182,7 +206,7 @@ router.post("/signup", async (req, res) => {
     }
 });
 
-router.get("/status", (req, res) => {
+router.get("/api/status", (req, res) => {
     // Makes any flash available in the response, then deletes it.
     res.locals.flash = req.session.flash;
     delete req.session.flash;

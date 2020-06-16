@@ -1,11 +1,12 @@
 var loggedIn = false;
 var user;
-$.get('/status', function (data) {
+$.get('/api/status', function (data) {
     user = data.user;
     loggedIn = data.isLoggedIn;
 
     if (data.isLoggedIn) {
         $('.isLoggedIn').show();
+        $('.isLoggedIn').css('display', 'flex');
 
     } else {
         $('.isNotLoggedIn').show();
@@ -22,6 +23,7 @@ $.get('/status', function (data) {
     if (data.user) {
         user = data.user;
         $('.currentUsername').text(data.user.username);
+        $('.currentAvatar').attr('src', '/' + data.user.avatar);
     }
 });
 
@@ -31,6 +33,7 @@ function likePost(elem, postID) {
     // SET TO loggedIn
     if (loggedIn) {
         if ($(elem).css("color") === "rgb(0, 128, 0)") {
+            $.post('/api/posts/unlike/' + postID);
             $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) - 1));
             $(elem).css({
                 "color": "black",
@@ -63,9 +66,9 @@ function likePost(elem, postID) {
 
 function dislikePost(elem, postID) {
 
-    // SET TO loggedIn
-    if (true) {
+    if (loggedIn) {
         if ($(elem).css("color") === "rgb(255, 0, 0)") {
+            $.post('/api/posts/unlike/' + postID);
             $('#post-' + postID + '-points').text((parseInt($('#post-' + postID + '-points').text()) + 1));
             $(elem).css({
                 "color": "black",
@@ -108,8 +111,6 @@ function generatePosts(list) {
         for (j = 0; j < postList[i].points.length; j++) {
             points = points + postList[i].points[j].points;
         }
-        console.log(points)
-
 
         $('#post-wrapper').append(`<div class="post">
           <div class="row justify-content-md-center">
@@ -135,13 +136,13 @@ function generatePosts(list) {
               <!-- FOOTER -->
               <div class="row justify-content-between post-footer">
                 <div class="col-md-auto">
-                    <img src="https://mdbootstrap.com/img/Photos/Avatars/avatar-2.jpg" alt="avatar" class="avatar border rounded-circle border-dark">
+                    <img src="/${postList[i].user.avatar}" alt="avatar" class="avatar border rounded-circle border-dark">
                     <span class="post-footer-text">Posted by</span>  
                     <a href="/profile/${postList[i].user.username}"><span class="username text-primary">${postList[i].user.username}</span>  </a>
                   
                 </div>
                 <div class="col-md-auto">
-                  <span class="post-footer-text">${parseDate(postList[i].createdAt)}</span> 
+                  <span class="post-footer-text">${parseDate(postList[i].createdAt, true)}</span> 
                 </div> 
                 
               </div>
@@ -197,7 +198,13 @@ function sortListByDate() {
     }));
 }
 
-function parseDate(dateString) {
-    d = dateString.split(/[- T . :]/);
-    return `${d[3]}:${d[4]}:${d[5]} ${d[2]}/${d[1]}/${d[0]}`;
+function parseDate(dateString, includeTime) {
+    if (includeTime) {
+        d = dateString.split(/[- T . :]/);
+        return `${d[3]}:${d[4]}:${d[5]} ${d[2]}/${d[1]}/${d[0]}`;
+    } else {
+        d = dateString.split(/[- T . :]/);
+        return `${d[2]}/${d[1]}/${d[0]}`;
+    }
+
 }

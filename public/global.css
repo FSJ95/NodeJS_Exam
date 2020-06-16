@@ -162,6 +162,7 @@ input[type=password] {
 
 .navbar .avatar {
   vertical-align: middle;
+  object-fit: cover;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -188,6 +189,7 @@ input[type=password] {
 }
 
 .profile-content .avatar {
+  object-fit: cover;
   height: 130px;
   width: 130px;
 }
@@ -202,6 +204,7 @@ input[type=password] {
 }
 
 .post .avatar {
+  object-fit: cover;
   height: 30px;
   width: 30px;
 }
@@ -233,4 +236,64 @@ input[type=password] {
 
 .post-category {
   margin-left: 10px;
+}
+
+/* CHAT CSS */
+.chat {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.chat .avatar {
+  height: 45px;
+  width: 45px;
+  object-fit: cover;
+}
+
+.chat .user {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+  margin-right: 1px;
+  background-color: #65676919;
+}
+
+.chat .title {
+  position: -webkit-sticky;
+  /* Safari */
+  position: sticky;
+  top: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #c4c8cc;
+  z-index: 999;
+}
+
+.chat .messages {
+  height: inherit;
+  background-color: #65676919;
+}
+
+.chat .messageUsername {
+  font-weight: 700;
+}
+
+.chat .titleUsername {
+  font-weight: 700;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1em;
+  font-size: 29px;
+  padding-left: 10px;
+}
+
+.chat .sendMessageForm {
+  position: -webkit-sticky;
+  /* Safari */
+  position: sticky;
+  bottom: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #c4c8cc;
+  z-index: 999;
 }

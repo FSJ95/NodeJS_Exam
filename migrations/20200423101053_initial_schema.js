@@ -13,6 +13,7 @@ exports.up = function (knex) {
             table.string('username').unique().notNullable();
             table.string('password').notNullable();
             table.string('email').notNullable();
+            table.string('avatar').notNullable().defaultTo('defaultprofilepicture.png');
 
             table.integer('role_id').notNullable().unsigned();
             table.foreign('role_id').references('id').inTable('roles');

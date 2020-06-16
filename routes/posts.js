@@ -11,6 +11,7 @@ router.get('/api/posts', async (req, res) => {
     const posts = await Post.query().select().withGraphJoined('[category, user]')
         .modifyGraph('user', builder => {
             builder.select('username');
+            builder.select('avatar');
         });
     const points = await Point.query().select();
 
@@ -37,6 +38,7 @@ router.get('/api/posts/user/:username', async (req, res) => {
     const posts = await Post.query().select().withGraphJoined('[user, category]')
         .modifyGraph('user', builder => {
             builder.select('username');
+            builder.select('avatar');
         }).where('user.username', username);
     const points = await Point.query().select();
 
@@ -56,12 +58,49 @@ router.get('/api/posts/user/:username', async (req, res) => {
     res.send(posts);
 });
 
+// Fetch all users favorites.
+router.get('/api/posts/favorites', async (req, res) => {
+   
+    if (req.session.isLoggedIn) {
+    
+
+        const posts = await Post.query().select().withGraphJoined('[user, category]')
+            .modifyGraph('user', builder => {
+                builder.select('username');
+                builder.select('avatar');
+            });
+        const points = await Point.query().select();
+
+        var favorites = [];
+        for (i = 0; i < posts.length; i++) {
+            var pointsArray = [];
+            var totalPoints = 0;
+            for (j = 0; j < points.length; j++) {
+            
+                if (posts[i].id == points[j].postId && points[j].points > 0 && req.session.user.id == points[j].userId) {
+                    pointsArray.push(points[j]);
+                    totalPoints += points[j].points;
+                    favorites.push(posts[i]);
+                }
+            }
+            posts[i].points = pointsArray;
+            posts[i].totalPoints = totalPoints;
+        }
+        res.send(favorites);
+
+    } else {
+
+    }
+
+});
+
 // Fetch all posts by category.
 router.get('/api/posts/category/:category', async (req, res) => {
     const category = req.params.category
     const posts = await Post.query().select().withGraphJoined('[user, category]')
         .modifyGraph('user', builder => {
             builder.select('username');
+            builder.select('avatar');
         }).where('category', category);
     const points = await Point.query().select();
 
@@ -141,6 +180,19 @@ router.post('/api/posts/like/:postID', async (req, res) => {
             });
 
         }
+    }
+})
+
+router.post('/api/posts/unlike/:postID', async (req, res) => {
+
+    const postID = req.params.postID
+
+    if (req.session.isLoggedIn) {
+
+        await Point.query()
+            .patch({
+                points: 0,
+            }).where('postId', '=', postID).andWhere('userId', '=', req.session.user.id);;
     }
 })
 

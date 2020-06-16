@@ -6,6 +6,7 @@ app.use(express.urlencoded({
     extended: false
 }));
 app.use(express.static('public'));
+app.use(express.static('pictures'));
 
 // RATE LIMIT
 const rateLimit = require("express-rate-limit");
@@ -59,6 +60,7 @@ const modalPage = fs.readFileSync("public/modal/modal.html", "utf8");
 const frontpagePage = fs.readFileSync("public/index/index.html", "utf8");
 const favoritesPage = fs.readFileSync("public/favorites/favorites.html", "utf8");
 const categoryPage = fs.readFileSync("public/category/category.html", "utf8");
+const chatPage = fs.readFileSync("public/chat/chat.html", "utf8");
 const profilePage = fs.readFileSync("public/profile/profile.html", "utf8");
 const settingsPage = fs.readFileSync("public/settings/settings.html", "utf8");
 const signupPage = fs.readFileSync("public/signup/signup.html", "utf8");
@@ -71,6 +73,19 @@ app.get("/", (req, res) => {
 app.get("/category/:category", (req, res) => {
 
     return res.send(navbarPage + flashPage + modalPage + categoryPage + footerPage);
+});
+
+app.get("/chat", (req, res) => {
+
+    if (true) {
+
+        return res.send(navbarPage + flashPage + chatPage + footerPage);
+
+    } else {
+
+        res.redirect("/");
+
+    }
 });
 
 app.get("/favorites", (req, res) => {
