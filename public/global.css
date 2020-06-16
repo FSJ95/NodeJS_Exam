@@ -289,6 +289,15 @@ input[type=password] {
   padding-left: 10px;
 }
 
+.chat .messageUsername {
+  font-weight: 700;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1em;
+  font-size: 15px;
+  padding-left: 10px;
+}
+
 .chat .sendMessageForm {
   position: -webkit-sticky;
   /* Safari */

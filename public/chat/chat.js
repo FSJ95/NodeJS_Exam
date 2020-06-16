@@ -9,18 +9,11 @@ $.get('/api/users', (data) => {
         if (data[i].id !== user.id) {
 
             $('.chat .user-wrapper').append(`<a class="row user rounded" href="/chat/${data[i].id}">
-            <div class="col-md-3">
+            <div class="col-md-auto">
               <center>
                 <img src="/${data[i].avatar}" alt="avatar" class="avatar border rounded-circle border-dark">
-              </center>
-            </div>
-            <div class="col-md-9">
-              <div class="row username">
                 <span class="messageUsername">${data[i].username}</span>
-              </div>
-              <div class="row latestMessage">
-                <span>Show latest message</span>
-              </div>
+              </center>
             </div>
           </a>`);
         };
@@ -74,12 +67,15 @@ function scrollDown() {
     $(".chat .messages").scrollTop($(".chat .messages")[0].scrollHeight);
 };
 
+// Function for sending message
 function sendMessage() {
-    $.post('/api/messages/send', {
-        message: $('.chat #message').val(),
-        recieverID: $('.chat #recieverID').val()
-    });
-    cleanMessageField();
-
+    if ($('.chat #message').val() && $('.chat #recieverID').val()) {
+        $.post('/api/messages/send', {
+            message: $('.chat #message').val(),
+            recieverID: $('.chat #recieverID').val()
+        });
+        cleanMessageField();
+    }
 }
+
 scrollDown();
