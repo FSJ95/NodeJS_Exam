@@ -56,7 +56,7 @@ if (recieverId) {
 
     $.get('/api/status', function (status) {
 
-        socket = io.connect("localhost:9090");
+        socket = io.connect("13.48.70.165:9090");
 
         socket.on('connect', function (data) {
             socket.emit('saveConnection', {
