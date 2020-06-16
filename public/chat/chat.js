@@ -44,7 +44,7 @@ if (recieverId) {
 
             } else {
                 $('.message-wrapper').append(`<div class="col-md-12">
-                <span><b class="receiver-username">(${data[i].reciever[0].username})</b></span> <span>${data[i].message}</span>
+                <span><b class="receiver-username">(${data[i].sender[0].username})</b></span> <span>${data[i].message}</span>
               </div>`)
 
 

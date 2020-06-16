@@ -132,8 +132,7 @@ router.post("/signup", upload.single('avatar'), async (req, res) => {
         email,
         passwordRepeat
     } = req.body;
-
-    const avatarFileName = req.file.filename ? req.file.filename : 'defaultprofilepicture.png';
+    const avatarFileName = req.file ? req.file.filename : 'defaultprofilepicture.png';
 
     const isPasswordTheSame = password === passwordRepeat;
     console.log(isPasswordTheSame);
