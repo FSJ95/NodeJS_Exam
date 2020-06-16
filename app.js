@@ -86,12 +86,14 @@ io.on('connection', function (socket) {
             //not present
             clients.push({
                 userID: data.userID,
-                socketID: socket.id
+                socketID: socket.id,
+                username: data.username
             });
         } else {
             clients[index] = {
                 userID: data.userID,
-                socketID: socket.id
+                socketID: socket.id,
+                username: data.username
             }
         }
 
@@ -102,30 +104,33 @@ io.on('connection', function (socket) {
     socket.on('sendMessage', ({
         message,
         senderID,
+        senderUsername,
         recieverID
     }) => {
+        const msg = {
+            message: escape(message),
+            senderID: escape(senderID),
+            senderUsername: escape(senderUsername),
+            recieverID: escape(recieverID)
+        }
         for (i = 0; i < clients.length; i++) {
 
             if (clients[i].userID == recieverID) {
 
-                const msg = {
-                    message: escape(message),
-                    senderID: escape(senderID),
-                    recieverID: escape(recieverID)
-                }
-                socket.emit('recieveMessage', msg);
                 io.to(clients[i].socketID).emit('recieveMessage', msg);
                 break;
             }
         }
+        socket.emit('recieveMessage', msg);
     });
     socket.on('disconnect', function (data) {
 
-        var index = clients.map(function (client) {
-            return client.userID;
-        }).indexOf(data.userID);
-
-        clients.splice(index, 1);
+        for (i = 0; i < clients.length; i++) {
+            if (clients[i].clientId == socket.id) {
+                clients.splice(i, 1);
+                break;
+            }
+        }
     });
 });
 

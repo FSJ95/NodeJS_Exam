@@ -60,7 +60,8 @@ if (recieverId) {
 
         socket.on('connect', function (data) {
             socket.emit('saveConnection', {
-                userID: status.user.id
+                userID: status.user.id,
+                username: status.user.username
             });
         });
 
@@ -69,12 +70,12 @@ if (recieverId) {
             if (data.senderID == user.id) {
 
                 $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
-                <span>${data.message}</span> <span><b class="sender-username">(${data.senderID})</b></span>
+                <span>${data.message}</span> <span><b class="sender-username">(${data.senderUsername})</b></span>
               </div>`)
 
             } else {
                 $('.message-wrapper').append(`<div class="col-md-12">
-                <span><b class="receiver-username">(${data.senderID})</b></span> <span>${data.message}</span>
+                <span><b class="receiver-username">(${data.senderUsername})</b></span> <span>${data.message}</span>
               </div>`)
 
             }
@@ -104,6 +105,7 @@ function sendMessage() {
         socket.emit("sendMessage", {
             message: $('.chat #message').val(),
             senderID: user.id,
+            senderUsername: user.username,
             recieverID: $('.chat #recieverID').val()
         });
 
