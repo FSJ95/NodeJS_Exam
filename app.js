@@ -74,30 +74,59 @@ const escape = require('escape-html');
 const helmet = require('helmet');
 app.use(helmet());
 
-io.on('connection', socket => {
-    // console.log("Socket joined", socket.id);
+var clients = [];
+
+io.on('connection', function (socket) {
+    socket.on('saveConnection', function (data) {
+
+        var index = clients.map(function (client) {
+            return client.userID;
+        }).indexOf(data.userID);
+        if (index === -1) {
+            //not present
+            clients.push({
+                userID: data.userID,
+                socketID: socket.id
+            });
+        } else {
+            clients[index] = {
+                userID: data.userID,
+                socketID: socket.id
+            }
+        }
 
 
-    socket.on("I'm thinking about this", ({
-        thoughts
-    }) => {
-        // sends out to all the clients
-        io.emit("Someone said", {
-            thoughts: escape(thoughts)
-        });
-
-        // sends back to the very same client
-        //socket.emit("Someone said", { thoughts });
-
-        // sends to all clients but the client itself
-        // socket.broadcast.emit("Someone said", { thoughts });
-
-
+        console.log(clients);
     });
 
-    /*     socket.on('disconnect', () => {
-            console.log("Socket left", socket.id);
-        }); */
+    socket.on('sendMessage', ({
+        message,
+        senderID,
+        recieverID
+    }) => {
+        for (i = 0; i < clients.length; i++) {
+
+            if (clients[i].userID == recieverID) {
+
+                const msg = {
+                    message: escape(message),
+                    senderID: escape(senderID),
+                    recieverID: escape(recieverID)
+                }
+                socket.emit('recieveMessage', msg);
+                io.to(clients[i].socketID).emit('recieveMessage', msg);
+                break;
+            }
+        }
+    });
+    socket.on('disconnect', function (data) {
+
+        var index = clients.map(function (client) {
+            return client.userID;
+        }).indexOf(data.userID);
+
+        clients.splice(index, 1);
+    });
 });
 
 
@@ -195,6 +224,7 @@ app.get("/signup", (req, res) => {
 });
 
 const PORT = 8080;
+server.listen(9090);
 app.listen(PORT, error => {
     if (error) {
         console.log(error);

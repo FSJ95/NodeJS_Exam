@@ -1,5 +1,6 @@
 const fullUrl = window.location.href;
 const recieverId = fullUrl.substr(fullUrl.lastIndexOf("/") + 1);
+var socket;
 
 $.get('/api/users', (data) => {
 
@@ -52,9 +53,34 @@ if (recieverId) {
 
         }
     });
+
+    $.get('/api/status', function (status) {
+
+        socket = io.connect("localhost:9090");
+
+        socket.on('connect', function (data) {
+            socket.emit('saveConnection', {
+                userID: status.user.id
+            });
+        });
+
+        socket.on("recieveMessage", data => {
+            console.log(data);
+            if (data.senderID == user.id) {
+
+                $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
+                <span>${data.message}</span> <span><b class="sender-username">(${data.senderID})</b></span>
+              </div>`)
+
+            } else {
+                $('.message-wrapper').append(`<div class="col-md-12">
+                <span><b class="receiver-username">(${data.senderID})</b></span> <span>${data.message}</span>
+              </div>`)
+
+            }
+        });
+    });
 }
-
-
 
 // Get rid of typed message when sent
 function cleanMessageField() {
@@ -74,6 +100,13 @@ function sendMessage() {
             message: $('.chat #message').val(),
             recieverID: $('.chat #recieverID').val()
         });
+
+        socket.emit("sendMessage", {
+            message: $('.chat #message').val(),
+            senderID: user.id,
+            recieverID: $('.chat #recieverID').val()
+        });
+
         cleanMessageField();
     }
 }
