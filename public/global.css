@@ -256,6 +256,8 @@ input[type=password] {
   margin-bottom: 5px;
   margin-right: 1px;
   background-color: #65676919;
+  color: black;
+  text-decoration: none;
 }
 
 .chat .title {
@@ -296,4 +298,13 @@ input[type=password] {
   padding-bottom: 10px;
   background-color: #c4c8cc;
   z-index: 999;
+}
+
+
+.chat .receiver-username {
+  margin-right: 10px;
+}
+
+.chat .sender-username {
+  margin-left: 10px;
 }

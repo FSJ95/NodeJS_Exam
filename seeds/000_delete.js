@@ -9,5 +9,7 @@ exports.seed = function (knex) {
       return knex('posts').del();
     }).then(function () {
       return knex('points').del();
+    }).then(function () {
+      return knex('messages').del();
     });
 };

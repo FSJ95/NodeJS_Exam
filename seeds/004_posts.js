@@ -10,7 +10,7 @@ exports.seed = function (knex) {
           title: "First post",
           category_id: categories.find(category => category.category === "Random").id,
           content: "This is my first post, its not very long but it's pretty cool! :)",
-          createdAt: new Date(Date.now() - 8640000 * 0)
+          createdAt: new Date(Date.now() - 86400000 * 0)
 
         },
         {

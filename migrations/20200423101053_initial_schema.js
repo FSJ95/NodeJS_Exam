@@ -45,6 +45,20 @@ exports.up = function (knex) {
 
             table.integer('post_id').notNullable().unsigned();
             table.foreign('post_id').references('id').inTable('posts');
+        })
+        .createTable('messages', (table) => {
+            table.increments('id');
+
+            table.integer('sender_id').notNullable().unsigned();
+            table.foreign('sender_id').references('id').inTable('users');
+
+            table.integer('reciever_id').notNullable().unsigned();
+            table.foreign('reciever_id').references('id').inTable('users');
+
+            table.string('message');
+
+            table.dateTime('updated_at').defaultTo(knex.raw('NULL ON UPDATE CURRENT_TIMESTAMP'));
+            table.dateTime('created_at').notNullable().defaultTo(knex.raw('CURRENT_TIMESTAMP'));
         });
 
 };
@@ -54,6 +68,7 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
     return knex.schema
+        .dropTableIfExists('messages')
         .dropTableIfExists('points')
         .dropTableIfExists('posts')
         .dropTableIfExists('users')

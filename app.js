@@ -44,10 +44,12 @@ const authRoute = require("./routes/auth.js");
 const userRoute = require("./routes/users.js");
 const postRoute = require("./routes/posts.js");
 const categoryRoute = require("./routes/categories.js");
+const messageRoute = require("./routes/messages.js");
 app.use(authRoute);
 app.use(userRoute);
 app.use(postRoute);
 app.use(categoryRoute);
+app.use(messageRoute);
 
 // FILESYSTEM (Load files and combine them)
 const fs = require('fs');
@@ -76,6 +78,18 @@ app.get("/category/:category", (req, res) => {
 });
 
 app.get("/chat", (req, res) => {
+
+    if (true) {
+
+        return res.send(navbarPage + flashPage + chatPage + footerPage);
+
+    } else {
+
+        res.redirect("/");
+
+    }
+});
+app.get("/chat/:recieverId", (req, res) => {
 
     if (true) {
 
