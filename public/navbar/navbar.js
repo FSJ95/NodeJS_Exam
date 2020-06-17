@@ -54,6 +54,9 @@ function drawSidebar() {
         case 'settings':
             $('#sidebarSettingsButton').addClass('active');
             break;
+        case 'chat':
+            $('#sidebarChatButton').addClass('active');
+            break;
         default:
             $('#sidebarHomeButton').addClass('active');
             break;
