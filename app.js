@@ -135,10 +135,14 @@ io.on('connection', function (socket) {
 //ROUTING
 app.get("/", (req, res) => {
 
+    req.session.loginReturnTo = req.originalUrl;
+
     return res.send(navbarPage + flashPage + modalPage + frontpagePage + footerPage);
 });
 
 app.get("/category/:category", (req, res) => {
+
+    req.session.loginReturnTo = req.originalUrl;
 
     return res.send(navbarPage + flashPage + modalPage + categoryPage + footerPage);
 });
@@ -193,24 +197,26 @@ app.get("/profile", (req, res) => {
 
 app.get("/profile/:username", (req, res) => {
 
+    req.session.loginReturnTo = req.originalUrl;
+
     return res.send(navbarPage + flashPage + profilePage + footerPage);
 
 });
 
-app.get("/settings", (req, res) => {
+// app.get("/settings", (req, res) => {
 
-    if (req.session.isLoggedIn) {
+//     if (req.session.isLoggedIn) {
 
-        return res.send(navbarPage + flashPage + settingsPage + footerPage);
+//         return res.send(navbarPage + flashPage + settingsPage + footerPage);
 
-    } else {
+//     } else {
 
-        // // So login knows what page the users was trying to access (where to redirect afterwards);
-        // req.session.loginReturnTo = req.originalUrl;
-        res.redirect("/");
-    }
+//         // // So login knows what page the users was trying to access (where to redirect afterwards);
+//         // req.session.loginReturnTo = req.originalUrl;
+//         res.redirect("/");
+//     }
 
-});
+// });
 
 app.get("/signup", (req, res) => {
     if (!req.session.isLoggedIn) {

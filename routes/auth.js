@@ -58,6 +58,9 @@ You have successfully created an account.
 
 router.post("/signin", async (req, res) => {
 
+    const referer = req.session.loginReturnTo ? req.session.loginReturnTo : "/"
+                        delete req.session.loginReturnTo;
+
     const {
         username,
         password
@@ -72,7 +75,6 @@ router.post("/signin", async (req, res) => {
                 username: username
             }).withGraphFetched('role');
             if (userObject) {
-
                 // Check if password matches hashedPassword from database.
                 const hashedPassword = userObject.password;
                 bcrypt.compare(password, hashedPassword).then((result) => {
@@ -85,10 +87,7 @@ router.post("/signin", async (req, res) => {
                         } else {
                             console.log("User is already logged in.");
                         }
-
-                        // Using conditional operators to redirect to the referer otherwise the homepage.
-                        const referer = req.session.loginReturnTo ? req.session.loginReturnTo : "/"
-                        delete req.session.loginReturnTo;
+                        
                         req.session.flash = {
                             type: 'success',
                             message: 'You have successfully logged in!'
@@ -100,7 +99,7 @@ router.post("/signin", async (req, res) => {
                             type: 'warning',
                             message: 'Wrong password, please try again!'
                         }
-                        return res.redirect("/");
+                        return res.redirect(referer);
 
                     }
                 });
@@ -110,7 +109,7 @@ router.post("/signin", async (req, res) => {
                     type: 'warning',
                     message: 'No user exists with that username. Please create a user if you havent already!'
                 }
-                return res.redirect("/");
+                return res.redirect(referer);
             }
 
         } catch (error) {
@@ -118,7 +117,7 @@ router.post("/signin", async (req, res) => {
                 type: 'danger',
                 message: 'Internal server error! Try again later.'
             }
-            return res.redirect("/");
+            return res.redirect(referer);
         }
     }
 });
