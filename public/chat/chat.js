@@ -25,64 +25,65 @@ $.get('/api/users', (data) => {
                 $('.right .avatar').attr('src', '/' + data[i].avatar)
                 $('.chat #recieverID').val(recieverId);
             }
+        }
+    }
+    if (recieverId) {
+        // Fetch all the messages with current user.
+        $.get(`/api/messages/${recieverId}`, function (data) {
 
-            // Fetch all the messages with current user.
-            $.get(`/api/messages/${recieverId}`, function (data) {
+            for (i = 0; i < data.length; i++) {
 
-                for (i = 0; i < data.length; i++) {
+                if (parseInt(recieverId) == data[i].recieverId) {
 
-                    if (parseInt(recieverId) == data[i].recieverId) {
-
-                        $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
-                        <span>${data[i].message}</span> <span><b class="sender-username">(${data[i].sender[0].username})</b></span>
-                      </div>`)
-
-
-                    } else {
-                        $('.message-wrapper').append(`<div class="col-md-12">
-                        <span><b class="receiver-username">(${data[i].sender[0].username})</b></span> <span>${data[i].message}</span>
-                      </div>`)
+                    $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
+                <span>${data[i].message}</span> <span><b class="sender-username">(${data[i].sender[0].username})</b></span>
+              </div>`)
 
 
-                    }
+                } else {
+                    $('.message-wrapper').append(`<div class="col-md-12">
+                <span><b class="receiver-username">(${data[i].sender[0].username})</b></span> <span>${data[i].message}</span>
+              </div>`)
 
-                    scrollDown();
 
                 }
-            });
 
-            // Start up the sockets
-            $.get('/api/status', function (status) {
+                scrollDown();
 
-                socket = io.connect("13.48.70.165:9090");
+            }
+        });
 
-                // Send logged in userID and Username when socket is connected.
-                socket.on('connect', function (data) {
-                    socket.emit('saveConnection', {
-                        userID: status.user.id,
-                        username: status.user.username
-                    });
-                });
+        // Start up the sockets
+        $.get('/api/status', function (status) {
 
-                // When a message is recieved create it in the chat window.
-                socket.on("recieveMessage", data => {
-                    if (data.senderID == user.id) {
+            socket = io.connect("13.48.70.165:9090");
 
-                        $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
-                        <span>${data.message}</span> <span><b class="sender-username">(${data.senderUsername})</b></span>
-                      </div>`)
-
-                    } else {
-                        $('.message-wrapper').append(`<div class="col-md-12">
-                        <span><b class="receiver-username">(${data.senderUsername})</b></span> <span>${data.message}</span>
-                      </div>`)
-
-                    }
-
-                    scrollDown();
+            // Send logged in userID and Username when socket is connected.
+            socket.on('connect', function (data) {
+                socket.emit('saveConnection', {
+                    userID: status.user.id,
+                    username: status.user.username
                 });
             });
-        }
+
+            // When a message is recieved create it in the chat window.
+            socket.on("recieveMessage", data => {
+                if (data.senderID == user.id) {
+
+                    $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
+                <span>${data.message}</span> <span><b class="sender-username">(${data.senderUsername})</b></span>
+              </div>`)
+
+                } else {
+                    $('.message-wrapper').append(`<div class="col-md-12">
+                <span><b class="receiver-username">(${data.senderUsername})</b></span> <span>${data.message}</span>
+              </div>`)
+
+                }
+
+                scrollDown();
+            });
+        });
     }
 });
 
