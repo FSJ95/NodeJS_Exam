@@ -1,4 +1,4 @@
-// List of categories for the sidebar
+// Fetches categories then draws the sidebar.
 $.get('/api/categories', function (data) {
     for (var i = 0; i < data.length; i++) {
         if (i < data.length - 1) {
@@ -9,21 +9,13 @@ $.get('/api/categories', function (data) {
             <center> ${data[i].category} </center> </a>`);
         }
     }
-    drawSidebar();
-
-});
-
-$(document).ready(function () {
-
-    // Standard settings for the category sidebar
     $('#sidebarCategoriesButton').append(`<i class="fas fa-caret-right push-right"></i>`);
     $('#category-wrapper').hide();
     drawSidebar();
-
 });
 
+// Function for toggeling the categoy sidebar menu.
 function toggleCategoriesMenu() {
-
     if ($('#category-wrapper').is(":hidden") == true) {
         $('#category-wrapper').show();
         $('#sidebarCategoriesButton .fa-caret-right').remove();
@@ -37,11 +29,10 @@ function toggleCategoriesMenu() {
         $('#sidebarCategoriesButton').append(`<i class="fas fa-caret-right push-right"></i>`);
         $('#sidebarCategoriesButton').removeClass('open');
     }
-
 }
 
+// Change the sidebar item to be active according to the right pathname.
 function drawSidebar() {
-    // Change the sidebar item to be active according to the right pathname.
     var pathname = window.location.pathname;
     var path = pathname.split('/');
     console.log(path);

@@ -101,7 +101,7 @@ function dislikePost(elem, postID) {
 }
 
 
-// POST GENERATION
+// Generates the posts on the page including users likes (if any).
 function generatePosts(postList) {
 
     for (i = 0; i < postList.length; i++) {
@@ -175,34 +175,31 @@ function generatePosts(postList) {
     }
 }
 
+// Sorting then generating the list depending on site and sort method.
 function sortList(page, sort) {
     var postList;
     var call;
 
+    // Fetches different posts depending on site requestion.
     if (page === 'index') {
-
         call = $.get('/api/posts', function (data) {
             postList = data;
         });
-
     } else if (page === 'category') {
-
         call = $.get(`/api/posts/category/${category}`, function (data) {
             postList = data;
         });
-
     } else if (page === 'profile') {
         call = $.get(`/api/posts/user/${username}`, function (data) {
             postList = data;
         });
-
     } else if (page === 'favorites') {
         call = $.get('/api/posts/favorites', function (data) {
             postList = data;
         });
-
     }
 
+    // Promise runs when a call is finished.
     call.done(function () {
         $('#post-wrapper').empty();
         if (sort === 'points') {
@@ -223,11 +220,9 @@ function sortList(page, sort) {
             }));
         }
     });
-
-
 }
 
-
+// Function for parsing the date, outputs with or without time.
 function parseDate(dateString, includeTime) {
     if (includeTime) {
         d = dateString.split(/[- T . :]/);
