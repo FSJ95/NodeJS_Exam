@@ -1,6 +1,8 @@
 const fullUrl = window.location.href;
 const username = fullUrl.substr(fullUrl.lastIndexOf("/") + 1);
 
+sortList('profile', 'date');
+
 $.get(`/api/users/${username}`, function (data) {
   $('#profileUsername').text(data.username);
   $('#profileAvatar').attr('src', '/' + data.avatar);
@@ -20,6 +22,4 @@ $.get(`/api/posts/user/${username}`, function (data) {
   }
   $('#profilePosts').text(postCount);
   $('#profilePoints').text(pointCount);
-
-  sortListByDate(data);
 });

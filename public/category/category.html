@@ -5,12 +5,13 @@
       a new post</button>
   </div>
   <div class="btn-toolbar mb-2 mb-md-0">
-    <button type="button" onclick="sortListByDate()" style="margin-right: 10px;"
+    <button type="button" onclick="sortList('category', 'date');" style="margin-right: 10px;"
       class="btn btn-sm date-button btn-outline-secondary">
       <i class="far fa-hourglass"></i>
       Latest
     </button>
-    <button type="button" onclick="sortListByPoints()" class="btn btn-sm points-button btn-outline-secondary">
+    <button type="button" onclick="sortList('category', 'points');"
+      class="btn btn-sm points-button btn-outline-secondary">
       <i class="fas fa-chart-line"></i>
       Most Points
     </button>

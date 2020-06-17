@@ -175,27 +175,58 @@ function generatePosts(postList) {
     }
 }
 
-function sortListByPoints() {
-    $('#post-wrapper').empty();
-    $('.points-button').removeClass('btn-outline-secondary');
-    $('.points-button').addClass('btn-secondary');
-    $('.date-button').removeClass('btn-secondary');
-    $('.date-button').addClass('btn-outline-secondary');
-    generatePosts(postList.sort((a, b) => {
-        return b['totalPoints'] - a['totalPoints'];
-    }));
+function sortList(page, sort) {
+    var postList;
+    var call;
+
+    if (page === 'index') {
+
+        call = $.get('/api/posts', function (data) {
+            postList = data;
+        });
+
+    } else if (page === 'category') {
+
+        call = $.get(`/api/posts/category/${category}`, function (data) {
+            postList = data;
+        });
+
+    } else if (page === 'profile') {
+        call = $.get(`/api/posts/user/${username}`, function (data) {
+            postList = data;
+        });
+
+    } else if (page === 'favorites') {
+        call = $.get('/api/posts/favorites', function (data) {
+            postList = data;
+        });
+
+    }
+
+    call.done(function () {
+        $('#post-wrapper').empty();
+        if (sort === 'points') {
+            $('.points-button').removeClass('btn-outline-secondary');
+            $('.points-button').addClass('btn-secondary');
+            $('.date-button').removeClass('btn-secondary');
+            $('.date-button').addClass('btn-outline-secondary');
+            generatePosts(postList.sort((a, b) => {
+                return b['totalPoints'] - a['totalPoints'];
+            }));
+        } else {
+            $('.date-button').removeClass('btn-outline-secondary');
+            $('.date-button').addClass('btn-secondary');
+            $('.points-button').removeClass('btn-secondary');
+            $('.points-button').addClass('btn-outline-secondary');
+            generatePosts(postList.sort((a, b) => {
+                return b['createdAt'] > a['createdAt'];
+            }));
+        }
+    });
+
+
 }
 
-function sortListByDate() {
-    $('#post-wrapper').empty();
-    $('.date-button').removeClass('btn-outline-secondary');
-    $('.date-button').addClass('btn-secondary');
-    $('.points-button').removeClass('btn-secondary');
-    $('.points-button').addClass('btn-outline-secondary');
-    generatePosts(postList.sort((a, b) => {
-        return b['createdAt'] > a['createdAt'];
-    }));
-}
 
 function parseDate(dateString, includeTime) {
     if (includeTime) {

@@ -1,6 +1,1 @@
-var postList;
-
-$.get('/api/posts/favorites', function (data) {
-    postList = data;
-    sortListByDate();
-});
+sortList('favorites', 'date');
