@@ -148,7 +148,7 @@ app.get("/category/:category", (req, res) => {
 
 app.get("/chat", (req, res) => {
 
-    if (true) {
+    if (req.session.isLoggedIn) {
 
         return res.send(navbarPage + flashPage + chatPage + footerPage);
 
@@ -160,7 +160,7 @@ app.get("/chat", (req, res) => {
 });
 app.get("/chat/:recieverId", (req, res) => {
 
-    if (true) {
+    if (req.session.isLoggedIn) {
 
         return res.send(navbarPage + flashPage + chatPage + footerPage);
 

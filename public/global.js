@@ -102,7 +102,7 @@ function dislikePost(elem, postID) {
 
 
 // POST GENERATION
-function generatePosts(list) {
+function generatePosts(postList) {
 
     for (i = 0; i < postList.length; i++) {
 
@@ -172,7 +172,6 @@ function generatePosts(list) {
                 }
             }
         }
-
     }
 }
 

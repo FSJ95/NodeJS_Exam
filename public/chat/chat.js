@@ -31,6 +31,7 @@ $.get('/api/users', (data) => {
 });
 
 if (recieverId) {
+
     $.get(`/api/messages/${recieverId}`, function (data) {
         console.log(data);
 
@@ -66,7 +67,6 @@ if (recieverId) {
         });
 
         socket.on("recieveMessage", data => {
-            console.log(data);
             if (data.senderID == user.id) {
 
                 $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
@@ -96,6 +96,7 @@ function scrollDown() {
 
 // Function for sending message
 function sendMessage() {
+    console.log("YAYAYAY");
     if ($('.chat #message').val() && $('.chat #recieverID').val()) {
         $.post('/api/messages/send', {
             message: $('.chat #message').val(),
