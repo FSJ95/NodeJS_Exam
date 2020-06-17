@@ -23,9 +23,6 @@ app.use(session({
     secret: require('./config/mysqlCredentials.js').sessionSecret,
     resave: false,
     saveUninitialized: true,
-    cookie: {
-        maxAge: 60000
-    }
 }));
 
 // OBJECTION & KNEX
@@ -117,7 +114,7 @@ io.on('connection', function (socket) {
 
             if (clients[i].userID == recieverID) {
 
-                io.to(clients[i].socketID).emit('recieveMessage', msg);
+                socket.broadcast.to(clients[i].socketID).emit('recieveMessage', msg);
                 break;
             }
         }
