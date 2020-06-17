@@ -4,10 +4,11 @@ var socket;
 
 // Fetches all users and draws the users in the chat.
 $.get('/api/users', (data) => {
-    for (i = 0; i < data.length; i++) {
-        // Ikke nødvendligt hvis friends implementeres
-        if (data[i].id !== user.id) {
-            $('.chat .user-wrapper').append(`<a class="row user rounded" href="/chat/${data[i].id}">
+    $.get('/api/status', function (status) {
+        for (i = 0; i < data.length; i++) {
+            // Ikke nødvendligt hvis friends implementeres
+            if (data[i].id !== status.user.id) {
+                $('.chat .user-wrapper').append(`<a class="row user rounded" href="/chat/${data[i].id}">
             <div class="col-md-auto">
               <center>
                 <img src="/${data[i].avatar}" alt="avatar" class="avatar border rounded-circle border-dark">
@@ -15,47 +16,42 @@ $.get('/api/users', (data) => {
               </center>
             </div>
           </a>`);
-        };
+            };
+
+            // If a chat user is clicked.
+            if (recieverId) {
+                // Change the chatwindow to the current user.
+                if (parseInt(recieverId) === data[i].id) {
+                    $('.chat .titleUsername').text(data[i].username);
+                    $('.right .avatar').attr('src', '/' + data[i].avatar)
+                    $('.chat #recieverID').val(recieverId);
+                }
+            }
+        }
 
         // If a chat user is clicked.
         if (recieverId) {
-            // Change the chatwindow to the current user.
-            if (parseInt(recieverId) === data[i].id) {
-                $('.chat .titleUsername').text(data[i].username);
-                $('.right .avatar').attr('src', '/' + data[i].avatar)
-                $('.chat #recieverID').val(recieverId);
-            }
-        }
-    }
-    if (recieverId) {
-        // Fetch all the messages with current user.
-        $.get(`/api/messages/${recieverId}`, function (data) {
+            // Fetch all the messages with current user.
+            $.get(`/api/messages/${recieverId}`, function (data) {
 
-            for (i = 0; i < data.length; i++) {
+                for (i = 0; i < data.length; i++) {
 
-                if (parseInt(recieverId) == data[i].recieverId) {
+                    if (parseInt(recieverId) == data[i].recieverId) {
 
-                    $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
-                <span>${data[i].message}</span> <span><b class="sender-username">(${data[i].sender[0].username})</b></span>
-              </div>`)
+                        $('.message-wrapper').append(`<div class="col-md-12" style="text-align:right;">
+                            <span>${data[i].message}</span> <span><b class="sender-username">(${data[i].sender[0].username})</b></span>
+                        </div>`)
+                    } else {
+                        $('.message-wrapper').append(`<div class="col-md-12">
+                            <span><b class="receiver-username">(${data[i].sender[0].username})</b></span> <span>${data[i].message}</span>
+                        </div>`)
+                    }
 
-
-                } else {
-                    $('.message-wrapper').append(`<div class="col-md-12">
-                <span><b class="receiver-username">(${data[i].sender[0].username})</b></span> <span>${data[i].message}</span>
-              </div>`)
-
-
+                    scrollDown();
                 }
+            });
 
-                scrollDown();
-
-            }
-        });
-
-        // Start up the sockets
-        $.get('/api/status', function (status) {
-
+            // Start up the sockets
             socket = io.connect("13.48.70.165:9090");
 
             // Send logged in userID and Username when socket is connected.
@@ -83,8 +79,8 @@ $.get('/api/users', (data) => {
 
                 scrollDown();
             });
-        });
-    }
+        }
+    });
 });
 
 // Get rid of typed message when sent
@@ -118,4 +114,4 @@ function sendMessage() {
 
         cleanMessageField();
     }
-}
+}n
