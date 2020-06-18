@@ -114,4 +114,4 @@ function sendMessage() {
 
         cleanMessageField();
     }
-}n
+}
