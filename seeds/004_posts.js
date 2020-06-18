@@ -6,7 +6,7 @@ exports.seed = function (knex) {
 
       var d = new Date();
       return knex('posts').insert([{
-          user_id: users.find(user => user.username === "Admin").id,
+          user_id: users.find(user => user.username === "Frederik").id,
           title: "First post",
           category_id: categories.find(category => category.category === "Random").id,
           content: "This is my first post, its not very long but it's pretty cool! :)",
@@ -14,7 +14,15 @@ exports.seed = function (knex) {
 
         },
         {
-          user_id: users.find(user => user.username === "Admin").id,
+          user_id: users.find(user => user.username === "Frederik").id,
+          title: "Exam help",
+          category_id: categories.find(category => category.category === "Education").id,
+          content: "I have a few exams very soon, does anyone have any tips for me?",
+          createdAt: new Date(Date.now() - 86400000 * 4)
+
+        },
+        {
+          user_id: users.find(user => user.username === "HappyMan").id,
           title: "Knock, knock ...",
           category_id: categories.find(category => category.category === "Jokes").id,
           content: "Who’s there? -- Luke. -- Luke who? -- Luke through the peep hole and find out.",
@@ -30,11 +38,18 @@ exports.seed = function (knex) {
 
         },
         {
-          user_id: users.find(user => user.username === "Admin").id,
+          user_id: users.find(user => user.username === "Bond").id,
           title: "Telsa Stock !!!!",
           category_id: categories.find(category => category.category === "Finance").id,
-          content: "OMFG TESLA STOCK WENT OVER 1000$ SELL SELL SELL",
+          content: "TESLA STOCK WENT OVER 1000$ SELL SELL SELL",
           createdAt: new Date(Date.now() - 86400000 * 3)
+        },
+        {
+          user_id: users.find(user => user.username === "Bond").id,
+          title: "Favorite song?",
+          category_id: categories.find(category => category.category === "Music").id,
+          content: "Private message me your favorite songs, need a new intro melody!",
+          createdAt: new Date(Date.now() - 86400000 * 5)
         },
       ]);
 
